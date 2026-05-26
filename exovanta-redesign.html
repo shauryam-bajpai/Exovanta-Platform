@@ -1,0 +1,2514 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exovanta — ATEX/IECEx Pre-Compliance Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300;9..144,400&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080e0d;
+      --bg-1: #0d1614;
+      --bg-2: #111d1a;
+      --bg-3: #162420;
+      --bg-4: #1c2e29;
+      --surface: rgba(255, 255, 255, 0.04);
+      --surface-hover: rgba(255, 255, 255, 0.07);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-bright: rgba(255, 255, 255, 0.14);
+      --ink: #e8f0ee;
+      --ink-2: #9fb8b2;
+      --ink-3: #5c7a74;
+      --green: #00e5a0;
+      --green-dim: rgba(0, 229, 160, 0.12);
+      --green-mid: rgba(0, 229, 160, 0.25);
+      --amber: #f0b040;
+      --amber-dim: rgba(240, 176, 64, 0.12);
+      --red: #ff5c5c;
+      --red-dim: rgba(255, 92, 92, 0.12);
+      --blue: #4da8ff;
+      --blue-dim: rgba(77, 168, 255, 0.12);
+      --violet: #a78bfa;
+      --shadow: 0 0 0 1px var(--border), 0 8px 32px rgba(0, 0, 0, 0.4);
+      --radius: 10px;
+      --radius-lg: 16px;
+      --nav-w: 240px;
+      --font: 'DM Sans', sans-serif;
+      --mono: 'DM Mono', monospace;
+      --serif: 'Fraunces', serif;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    button {
+      cursor: pointer;
+      font: inherit;
+      border: none;
+      background: none;
+      color: inherit;
+    }
+
+    input,
+    select,
+    textarea {
+      font: inherit;
+      color: inherit;
+      background: none;
+      border: none;
+      outline: none;
+    }
+
+    /* ── LAYOUT ─────────────────────────────────────────────── */
+    .shell {
+      display: grid;
+      grid-template-columns: var(--nav-w) 1fr;
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR ─────────────────────────────────────────────── */
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      background: var(--bg-1);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .brand {
+      padding: 22px 20px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--green) 0%, #00b87a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .brand-mark svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .brand-name {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-sub {
+      font-size: 10px;
+      color: var(--ink-3);
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-top: 1px;
+    }
+
+    .nav {
+      padding: 12px 10px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .nav-section {
+      margin-bottom: 6px;
+    }
+
+    .nav-label {
+      font-size: 10px;
+      color: var(--ink-3);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 6px 10px 4px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      color: var(--ink-2);
+      transition: all 0.15s;
+      cursor: pointer;
+      width: 100%;
+      position: relative;
+    }
+
+    .nav-item:hover {
+      background: var(--surface);
+      color: var(--ink);
+    }
+
+    .nav-item.active {
+      background: var(--green-dim);
+      color: var(--green);
+      font-weight: 500;
+    }
+
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 20%;
+      bottom: 20%;
+      width: 2px;
+      border-radius: 2px;
+      background: var(--green);
+    }
+
+    .nav-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      opacity: 0.8;
+    }
+
+    .nav-item.active .nav-icon {
+      opacity: 1;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      font-size: 10px;
+      font-family: var(--mono);
+      background: var(--red-dim);
+      color: var(--red);
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
+    .sidebar-footer {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1a4f44, #2d7a67);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--green);
+      flex-shrink: 0;
+    }
+
+    .sidebar-user-name {
+      font-size: 12.5px;
+      font-weight: 500;
+    }
+
+    .sidebar-user-role {
+      font-size: 11px;
+      color: var(--ink-3);
+    }
+
+    /* ── MAIN ─────────────────────────────────────────────────── */
+    .main {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(8, 14, 13, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 28px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .topbar-breadcrumb {
+      font-size: 12px;
+      color: var(--ink-3);
+    }
+
+    .topbar-breadcrumb span {
+      color: var(--ink-2);
+    }
+
+    .topbar-title {
+      font-size: 15px;
+      font-weight: 600;
+      flex: 1;
+      letter-spacing: -0.2px;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: #051210;
+      box-shadow: 0 0 20px rgba(0, 229, 160, 0.2);
+    }
+
+    .btn-primary:hover {
+      background: #00cc8f;
+      box-shadow: 0 0 28px rgba(0, 229, 160, 0.3);
+    }
+
+    .btn-ghost {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--ink-2);
+    }
+
+    .btn-ghost:hover {
+      background: var(--surface-hover);
+      color: var(--ink);
+      border-color: var(--border-bright);
+    }
+
+    .btn-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--ink-2);
+    }
+
+    .btn-icon:hover {
+      background: var(--surface-hover);
+      color: var(--ink);
+    }
+
+    /* ── SCREENS ──────────────────────────────────────────────── */
+    .screen {
+      display: none;
+      padding: 24px 28px 40px;
+      animation: fadeUp 0.25s ease;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ── PILLS / STATUS ─────────────────────────────────────── */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .pill-good {
+      background: rgba(0, 229, 160, 0.1);
+      color: #00e5a0;
+    }
+
+    .pill-watch {
+      background: rgba(240, 176, 64, 0.1);
+      color: #f0b040;
+    }
+
+    .pill-risk {
+      background: rgba(255, 92, 92, 0.1);
+      color: #ff5c5c;
+    }
+
+    .pill-neutral {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--ink-2);
+    }
+
+    .pill-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* ── CARDS ──────────────────────────────────────────────── */
+    .card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      gap: 12px;
+    }
+
+    .card-eyebrow {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--ink-3);
+      margin-bottom: 4px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+    }
+
+    .card-sub {
+      font-size: 12px;
+      color: var(--ink-2);
+      margin-top: 2px;
+    }
+
+    /* ── GRID ──────────────────────────────────────────────── */
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .cols-2 {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .cols-3 {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .cols-4 {
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+
+    .cols-5-3 {
+      grid-template-columns: 5fr 3fr;
+    }
+
+    .cols-7-5 {
+      grid-template-columns: 7fr 5fr;
+    }
+
+    .cols-8-4 {
+      grid-template-columns: 8fr 4fr;
+    }
+
+    .span-2 {
+      grid-column: span 2;
+    }
+
+    .span-3 {
+      grid-column: span 3;
+    }
+
+    /* ── STAT TILES ─────────────────────────────────────────── */
+    .stat-tile {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--ink-3);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: -1px;
+      color: var(--ink);
+      font-family: var(--font);
+    }
+
+    .stat-trend {
+      font-size: 11px;
+      color: var(--green);
+    }
+
+    /* ── PROGRESS BAR ───────────────────────────────────────── */
+    .prog-track {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .prog-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+
+    .prog-good {
+      background: var(--green);
+      box-shadow: 0 0 8px rgba(0, 229, 160, 0.4);
+    }
+
+    .prog-watch {
+      background: var(--amber);
+    }
+
+    .prog-risk {
+      background: var(--red);
+    }
+
+    /* ── RADIAL RING ─────────────────────────────────────────── */
+    .ring-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ring-wrap .ring-label {
+      font-size: 10px;
+      color: var(--ink-3);
+      text-align: center;
+      line-height: 1.3;
+      max-width: 60px;
+    }
+
+    .ring-score-text {
+      font-size: 12px;
+      font-weight: 600;
+      fill: var(--ink);
+    }
+
+    /* ── SIMULATION CARDS ────────────────────────────────────── */
+    .sim-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .sim-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      transition: border-color 0.2s;
+    }
+
+    .sim-card:hover {
+      border-color: var(--border-bright);
+    }
+
+    .sim-card.complete {
+      border-left: 2px solid var(--green);
+    }
+
+    .sim-card.running {
+      border-left: 2px solid var(--amber);
+    }
+
+    .sim-card.blocked {
+      border-left: 2px solid var(--red);
+    }
+
+    .sim-card.locked {
+      border-left: 2px solid var(--ink-3);
+      opacity: 0.6;
+    }
+
+    .sim-id {
+      font-size: 10px;
+      font-family: var(--mono);
+      color: var(--ink-3);
+    }
+
+    .sim-name {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 2px 0;
+    }
+
+    .sim-domain {
+      font-size: 11px;
+      color: var(--ink-2);
+    }
+
+    .sim-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .sim-step {
+      font-size: 11px;
+      color: var(--ink-3);
+      font-family: var(--mono);
+    }
+
+    /* ── GAP ROWS ────────────────────────────────────────────── */
+    .gap-row {
+      display: grid;
+      grid-template-columns: 80px 160px 1fr 80px 90px;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      transition: all 0.15s;
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+      background: var(--bg-3);
+      margin-bottom: 6px;
+    }
+
+    .gap-row:hover {
+      background: var(--bg-4);
+      border-color: var(--border);
+    }
+
+    .gap-sim {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--ink-3);
+    }
+
+    .gap-clause {
+      font-size: 11px;
+      color: var(--blue);
+    }
+
+    .gap-desc {
+      font-size: 12.5px;
+      font-weight: 500;
+    }
+
+    .gap-row-head {
+      display: grid;
+      grid-template-columns: 80px 160px 1fr 80px 90px;
+      gap: 12px;
+      padding: 6px 16px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--ink-3);
+    }
+
+    /* ── SCORECARD ───────────────────────────────────────────── */
+    .big-score {
+      font-size: 72px;
+      font-weight: 300;
+      letter-spacing: -4px;
+      font-family: var(--serif);
+      color: var(--green);
+      line-height: 1;
+    }
+
+    .big-score span {
+      font-size: 32px;
+      color: var(--ink-3);
+    }
+
+    /* ── TIMELINE ─────────────────────────────────────────────── */
+    .gantt {
+      display: flex;
+      gap: 3px;
+      height: 48px;
+    }
+
+    .gantt-seg {
+      border-radius: 6px;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      font-size: 11px;
+      font-weight: 500;
+      min-width: 0;
+      flex-shrink: 0;
+      gap: 6px;
+    }
+
+    .g-complete {
+      background: rgba(0, 229, 160, 0.15);
+      color: var(--green);
+      border: 1px solid rgba(0, 229, 160, 0.2);
+    }
+
+    .g-running {
+      background: rgba(240, 176, 64, 0.12);
+      color: var(--amber);
+      border: 1px solid rgba(240, 176, 64, 0.2);
+    }
+
+    .g-blocked {
+      background: rgba(255, 92, 92, 0.1);
+      color: var(--red);
+      border: 1px solid rgba(255, 92, 92, 0.2);
+    }
+
+    .g-locked {
+      background: var(--surface);
+      color: var(--ink-3);
+      border: 1px solid var(--border);
+    }
+
+    /* ── LIVE FEED ─────────────────────────────────────────────── */
+    .feed-item {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .feed-item:last-child {
+      border-bottom: none;
+    }
+
+    .feed-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+
+    .feed-dot.complete {
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+    }
+
+    .feed-dot.gap {
+      background: var(--red);
+      box-shadow: 0 0 6px var(--red);
+    }
+
+    .feed-dot.recommend {
+      background: var(--blue);
+      box-shadow: 0 0 6px var(--blue);
+    }
+
+    .feed-dot.action {
+      background: var(--amber);
+      box-shadow: 0 0 6px var(--amber);
+    }
+
+    .feed-actor {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .feed-text {
+      font-size: 12px;
+      color: var(--ink-2);
+      line-height: 1.4;
+    }
+
+    .feed-time {
+      font-size: 10px;
+      color: var(--ink-3);
+      font-family: var(--mono);
+    }
+
+    /* ── HERO VISUAL ──────────────────────────────────────────── */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 24px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .hero-copy {}
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--green);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      width: 18px;
+      height: 1px;
+      background: var(--green);
+    }
+
+    .hero-h1 {
+      font-size: 30px;
+      font-weight: 300;
+      letter-spacing: -1px;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      font-family: var(--serif);
+    }
+
+    .hero-h1 strong {
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    .hero-p {
+      font-size: 13.5px;
+      color: var(--ink-2);
+      line-height: 1.7;
+      max-width: 460px;
+      margin-bottom: 20px;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+
+    .hero-tag {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border-bright);
+      color: var(--ink-2);
+      font-family: var(--mono);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .hero-visual {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 60% 40%, rgba(0, 229, 160, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .readiness-num {
+      font-size: 48px;
+      font-weight: 300;
+      font-family: var(--serif);
+      color: var(--green);
+      letter-spacing: -2px;
+    }
+
+    .readiness-label {
+      font-size: 11px;
+      color: var(--ink-3);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+    }
+
+    /* ── ANALYTICS CHART ──────────────────────────────────────── */
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 220px;
+    }
+
+    /* ── TECHNICAL FILE ────────────────────────────────────────── */
+    .section-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: var(--bg-3);
+      margin-bottom: 6px;
+    }
+
+    .section-name {
+      font-size: 13px;
+      font-weight: 500;
+      flex: 1;
+    }
+
+    .section-evidence {
+      font-size: 11px;
+      color: var(--ink-3);
+      font-family: var(--mono);
+      width: 140px;
+    }
+
+    /* ── DIMENSION RINGS ────────────────────────────────────────── */
+    .dim-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    /* ── FORM FIELDS ────────────────────────────────────────────── */
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 11px;
+      color: var(--ink-3);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 5px;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      background: var(--bg-3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: var(--ink);
+      transition: border-color 0.15s;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: rgba(0, 229, 160, 0.4);
+      outline: none;
+    }
+
+    .field select option {
+      background: var(--bg-2);
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* ── WIZARD STEPS ────────────────────────────────────────────── */
+    .wizard-steps {
+      display: flex;
+      gap: 0;
+      margin-bottom: 24px;
+    }
+
+    .wstep {
+      flex: 1;
+      text-align: center;
+      padding: 10px 6px;
+      font-size: 12px;
+      color: var(--ink-3);
+      position: relative;
+      border-bottom: 2px solid var(--border);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .wstep.active {
+      color: var(--green);
+      border-bottom-color: var(--green);
+      font-weight: 500;
+    }
+
+    .wstep.done {
+      color: var(--ink-2);
+      border-bottom-color: var(--green-dim);
+    }
+
+    .wstep-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      font-size: 10px;
+      background: var(--border);
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .wstep.active .wstep-num {
+      background: var(--green);
+      color: #051210;
+    }
+
+    /* ── COPILOT FAB ────────────────────────────────────────────── */
+    .fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 100;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--green);
+      color: #051210;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(0, 229, 160, 0.4);
+      transition: all 0.2s;
+      font-size: 22px;
+    }
+
+    .fab:hover {
+      transform: scale(1.08);
+      box-shadow: 0 6px 28px rgba(0, 229, 160, 0.5);
+    }
+
+    /* ── COPILOT PANEL ──────────────────────────────────────────── */
+    .copilot-panel {
+      position: fixed;
+      bottom: 88px;
+      right: 24px;
+      z-index: 100;
+      width: 360px;
+      background: var(--bg-2);
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      max-height: 500px;
+    }
+
+    .copilot-panel.open {
+      display: flex;
+    }
+
+    .copilot-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .copilot-header-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    .copilot-title {
+      font-size: 13px;
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .copilot-msgs {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 200px;
+    }
+
+    .msg {
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+      max-width: 90%;
+    }
+
+    .msg-user {
+      background: rgba(0, 229, 160, 0.12);
+      color: var(--green);
+      align-self: flex-end;
+      border: 1px solid rgba(0, 229, 160, 0.2);
+    }
+
+    .msg-ai {
+      background: var(--bg-3);
+      color: var(--ink);
+      align-self: flex-start;
+      border: 1px solid var(--border);
+    }
+
+    .copilot-input-row {
+      padding: 10px 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+    }
+
+    .copilot-input {
+      flex: 1;
+      background: var(--bg-3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: var(--ink);
+    }
+
+    .copilot-input:focus {
+      border-color: rgba(0, 229, 160, 0.4);
+    }
+
+    .copilot-send {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--green);
+      color: #051210;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    /* ── LIVE DOT ────────────────────────────────────────────────── */
+    .live-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      color: var(--green);
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 1.5s infinite;
+    }
+
+    /* ── MISC ──────────────────────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 16px 0;
+    }
+
+    .mono {
+      font-family: var(--mono);
+    }
+
+    .text-green {
+      color: var(--green);
+    }
+
+    .text-amber {
+      color: var(--amber);
+    }
+
+    .text-red {
+      color: var(--red);
+    }
+
+    .text-blue {
+      color: var(--blue);
+    }
+
+    .text-muted {
+      color: var(--ink-2);
+    }
+
+    .text-dim {
+      color: var(--ink-3);
+    }
+
+    .mt-8 {
+      margin-top: 8px;
+    }
+
+    .mt-12 {
+      margin-top: 12px;
+    }
+
+    .mt-16 {
+      margin-top: 16px;
+    }
+
+    .mb-8 {
+      margin-bottom: 8px;
+    }
+
+    .mb-12 {
+      margin-bottom: 12px;
+    }
+
+    .flex {
+      display: flex;
+    }
+
+    .gap-8 {
+      gap: 8px;
+    }
+
+    .gap-12 {
+      gap: 12px;
+    }
+
+    .items-center {
+      align-items: center;
+    }
+
+    .justify-between {
+      justify-content: space-between;
+    }
+
+    .fw-600 {
+      font-weight: 600;
+    }
+
+    .fw-500 {
+      font-weight: 500;
+    }
+
+    .fs-11 {
+      font-size: 11px;
+    }
+
+    .fs-12 {
+      font-size: 12px;
+    }
+
+    .fs-13 {
+      font-size: 13px;
+    }
+
+    .fs-24 {
+      font-size: 24px;
+    }
+
+    .annotation {
+      background: var(--bg-3);
+      border-left: 2px solid var(--green);
+      padding: 10px 14px;
+      border-radius: 0 8px 8px 0;
+      font-size: 12.5px;
+      color: var(--ink-2);
+      line-height: 1.5;
+    }
+
+    .fix-box {
+      background: rgba(0, 229, 160, 0.05);
+      border: 1px solid rgba(0, 229, 160, 0.15);
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .fix-box .fix-title {
+      font-size: 11px;
+      color: var(--green);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 6px;
+    }
+
+    .fix-box .fix-body {
+      font-size: 13px;
+      color: var(--ink);
+    }
+
+    .fix-box .fix-margin {
+      font-size: 11px;
+      color: var(--ink-3);
+      margin-top: 4px;
+      font-family: var(--mono);
+    }
+
+    /* ── SVGS ─────────────────────────────────────────────────── */
+    svg text {
+      dominant-baseline: middle;
+    }
+
+    .ring-track {
+      stroke: rgba(255, 255, 255, 0.06);
+      fill: none;
+    }
+
+    .ring-progress {
+      fill: none;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.6s ease;
+    }
+
+    /* ── SCROLLBAR ────────────────────────────────────────────── */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="shell">
+
+    <!-- ── SIDEBAR ─────────────────────────────────────────────── -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">
+          <svg viewBox="0 0 20 20" fill="none">
+            <path d="M10 2L17 6V14L10 18L3 14V6L10 2Z" stroke="#051210" stroke-width="1.5" fill="rgba(0,0,0,0.2)" />
+            <circle cx="10" cy="10" r="3" fill="#051210" />
+            <path d="M10 5V7M10 13V15M5 10H7M13 10H15" stroke="#051210" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div>
+          <div class="brand-name">Exovanta</div>
+          <div class="brand-sub">Pre-Compliance AI</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <div class="nav-section">
+          <div class="nav-label">Platform</div>
+          <button class="nav-item active" data-view="dashboard">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+              <rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3" />
+              <rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3" />
+              <rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3" />
+              <rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.3" />
+            </svg>
+            Dashboard
+          </button>
+          <button class="nav-item" data-view="intake">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+              <path d="M8 1v8M5 6l3 3 3-3M2 11v2a1 1 0 001 1h10a1 1 0 001-1v-2" stroke="currentColor" stroke-width="1.3"
+                stroke-linecap="round" />
+            </svg>
+            Project Intake
+          </button>
+          <button class="nav-item" data-view="simulations">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3" />
+              <path d="M6 5.5l4 2.5-4 2.5V5.5z" fill="currentColor" />
+            </svg>
+            Simulation Engine
+          </button>
+        </div>
+        <div class="nav-section">
+          <div class="nav-label">Analysis</div>
+          <button class="nav-item" data-view="twin">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+              <path d="M8 1L14 4.5V11.5L8 15L2 11.5V4.5L8 1Z" stroke="currentColor" stroke-width="1.3" />
+              <path d="M8 7v4M5.5 5.8l2.5 1.2 2.5-1.2" stroke="currentColor" stroke-width="1.3"
+                stroke-linecap="round" />
+            </svg>
+            Digital Twin
+          </button>
+          <button class="nav-item" data-view="gaps">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+              <path d="M8 1L14.5 13H1.5L8 1Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
+              <path d="M8 6v3M8 11v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+            Gap Report
+            <span class="nav-badge">4</span>
+          </button>
+          <button class="nav-item" data-view="scorecard">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3" />
+              <path d="M8 8L8 4.5M8 8L10.5 10.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+            </svg>
+            Readiness Scorecard
+          </button>
+        </div>
+        <div class="nav-section">
+          <div class="nav-label">Delivery</div>
+          <button class="nav-item" data-view="techfile">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+              <path d="M4 1h6l3 3v10a1 1 0 01-1 1H4a1 1 0 01-1-1V2a1 1 0 011-1z" stroke="currentColor"
+                stroke-width="1.3" />
+              <path d="M9 1v3h3M5 7h6M5 9.5h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+            </svg>
+            Technical File
+          </button>
+          <button class="nav-item" data-view="analytics">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+              <path d="M2 12l3.5-4 3 2 3.5-5 2 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+            Analytics
+          </button>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="avatar">MR</div>
+        <div>
+          <div class="sidebar-user-name">Maya R.</div>
+          <div class="sidebar-user-role">Compliance Manager</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── MAIN CONTENT ─────────────────────────────────────────── -->
+    <main class="main">
+
+      <!-- TOP BAR -->
+      <header class="topbar">
+        <div style="flex:1">
+          <div class="topbar-breadcrumb">Project EXO-1042 · <span>Exovanta Sentinel</span></div>
+          <div class="topbar-title" id="topbar-title">Command Center</div>
+        </div>
+        <div class="topbar-actions">
+          <div class="live-indicator"><span class="live-dot"></span>Live</div>
+          <button class="btn-icon" title="Notifications">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 1.5A5 5 0 003 6.5v3l-1 1.5h12l-1-1.5v-3A5 5 0 008 1.5zM6.5 13a1.5 1.5 0 003 0"
+                stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+            </svg>
+          </button>
+          <button class="btn btn-primary" onclick="navigate('intake')">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M7 1v6M4 4l3-3 3 3M2 9v2.5a1 1 0 001 1h8a1 1 0 001-1V9" stroke="currentColor" stroke-width="1.4"
+                stroke-linecap="round" />
+            </svg>
+            New Intake
+          </button>
+        </div>
+      </header>
+
+      <!-- ── DASHBOARD ─────────────────────────────────────────── -->
+      <section class="screen active" id="view-dashboard">
+
+        <!-- Hero -->
+        <div class="hero">
+          <div class="hero-copy">
+            <div class="hero-eyebrow">Exovanta Platform</div>
+            <h1 class="hero-h1">Live ATEX/IECEx readiness,<br><strong>from raw design to certifiable evidence.</strong>
+            </h1>
+            <p class="hero-p">Turn the checklist behind hazardous-area certification into an operating cockpit — intake,
+              parse, simulate, score, resolve gaps, and generate technical files while the live model keeps moving.</p>
+            <div class="hero-tags">
+              <span class="hero-tag">9 SIM engines</span>
+              <span class="hero-tag">IEC 60079-0/11</span>
+              <span class="hero-tag">PDF/DOCX export</span>
+              <span class="hero-tag">Zone 0 / Zone 1</span>
+            </div>
+            <div class="hero-actions">
+              <button class="btn btn-primary" onclick="navigate('intake')">Start Guided Intake</button>
+              <button class="btn btn-ghost" onclick="navigate('simulations')">View Simulations</button>
+            </div>
+          </div>
+          <div class="hero-visual">
+            <div style="margin-bottom:16px">
+              <div class="readiness-label">Current Readiness</div>
+              <div class="readiness-num">84<span>%</span></div>
+            </div>
+            <div style="margin-bottom:12px">
+              <div class="flex items-center justify-between mb-8">
+                <span class="fs-11 text-dim">Zone 1 path</span>
+                <span class="fs-11 text-green mono">86% confidence</span>
+              </div>
+              <div class="prog-track">
+                <div class="prog-fill prog-good" style="width:84%"></div>
+              </div>
+            </div>
+            <div class="grid cols-2" style="gap:8px; margin-top:14px">
+              <div style="background:var(--bg-3);border-radius:8px;padding:10px 12px">
+                <div class="fs-11 text-dim">Zone 0</div>
+                <div style="font-size:20px;font-weight:600;color:var(--amber)">61%</div>
+                <div class="prog-track mt-8">
+                  <div class="prog-fill prog-watch" style="width:61%"></div>
+                </div>
+              </div>
+              <div style="background:var(--bg-3);border-radius:8px;padding:10px 12px">
+                <div class="fs-11 text-dim">Zone 1</div>
+                <div style="font-size:20px;font-weight:600;color:var(--green)">84%</div>
+                <div class="prog-track mt-8">
+                  <div class="prog-fill prog-good" style="width:84%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid cols-4 mb-12" style="margin-bottom:16px">
+          <div class="stat-tile">
+            <div class="stat-label">Total projects</div>
+            <div class="stat-value">28</div>
+            <div class="stat-trend">↑ +6 this quarter</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-label">Simulations run</div>
+            <div class="stat-value">1,247</div>
+            <div class="stat-trend">↑ 91 today</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-label">Pass rate</div>
+            <div class="stat-value">86%</div>
+            <div class="stat-trend">↑ +14 pts</div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-label">Time saved</div>
+            <div class="stat-value">4,620h</div>
+            <div class="stat-trend">vs manual assessment</div>
+          </div>
+        </div>
+
+        <div class="grid cols-5-3">
+
+          <!-- Simulation scorecards -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-eyebrow">Live compliance scorecard</div>
+                <div class="card-title">Readiness across all simulation domains</div>
+              </div>
+              <span class="pill pill-watch"><span class="pill-dot"></span>Running</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px" id="sim-rings">
+            </div>
+            <div class="divider"></div>
+            <div class="flex items-center gap-12">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 1a8 8 0 100 16A8 8 0 009 1zM9 9V5" stroke="var(--green)" stroke-width="1.5"
+                  stroke-linecap="round" />
+              </svg>
+              <strong class="text-green">84% overall readiness</strong>
+              <span class="text-dim fs-12">5 of 9 domains complete</span>
+            </div>
+          </div>
+
+          <!-- Live event feed -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-eyebrow">Recent activity</div>
+                <div class="card-title">Live event stream</div>
+              </div>
+              <div class="live-indicator"><span class="live-dot"></span>Live</div>
+            </div>
+            <div id="live-feed"></div>
+          </div>
+
+        </div>
+
+        <!-- Timeline -->
+        <div class="card mt-16">
+          <div class="card-header">
+            <div>
+              <div class="card-eyebrow">Project timeline</div>
+              <div class="card-title">Simulation execution order</div>
+            </div>
+            <span class="pill pill-watch"><span class="pill-dot"></span>Running</span>
+          </div>
+          <div class="gantt">
+            <div class="gantt-seg g-complete" style="flex:0 0 16%">
+              <svg width="12" height="12" viewBox="0 0 12 12">
+                <circle cx="6" cy="6" r="5" fill="none" stroke="currentColor" stroke-width="1.2" />
+                <path d="M3 6l2 2 4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+              </svg>
+              Foundation · SIM-05
+            </div>
+            <div class="gantt-seg g-running" style="flex:0 0 42%">
+              ⟳ Parallel · SIM-01 / 02 / 06 / 07 / 08
+            </div>
+            <div class="gantt-seg g-blocked" style="flex:0 0 24%">
+              ✕ Blocked · SIM-03 / 04
+            </div>
+            <div class="gantt-seg g-locked" style="flex:0 0 18%">
+              ⏸ Final · SIM-09
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ── INTAKE ─────────────────────────────────────────── -->
+      <section class="screen" id="view-intake">
+        <div style="max-width:900px">
+          <div class="card-eyebrow mb-8">PDF-backed onboarding</div>
+          <h2 style="font-size:22px;font-weight:300;font-family:var(--serif);letter-spacing:-0.5px;margin-bottom:20px">
+            Project Intake Console</h2>
+
+          <div class="wizard-steps">
+            <div class="wstep active" data-step="0">
+              <div class="wstep-num">1</div>
+              <div>Configuration</div>
+            </div>
+            <div class="wstep" data-step="1">
+              <div class="wstep-num">2</div>
+              <div>Artefacts</div>
+            </div>
+            <div class="wstep" data-step="2">
+              <div class="wstep-num">3</div>
+              <div>Data packs</div>
+            </div>
+            <div class="wstep" data-step="3">
+              <div class="wstep-num">4</div>
+              <div>Environment</div>
+            </div>
+            <div class="wstep" data-step="4">
+              <div class="wstep-num">5</div>
+              <div>Review</div>
+            </div>
+          </div>
+
+          <div class="grid cols-8-4" style="grid-template-columns:3fr 2fr">
+            <div id="wizard-content">
+              <!-- Step 0 -->
+              <div class="wizard-step-panel" data-panel="0">
+                <div class="grid cols-2" style="gap:12px">
+                  <div class="field"><label>Product name</label><input value="Exovanta Sentinel"></div>
+                  <div class="field"><label>Model / family</label><input value="EXO-SEN-42"></div>
+                  <div class="field"><label>Target zone</label><select>
+                      <option>Zone 1</option>
+                      <option>Zone 0</option>
+                    </select></div>
+                  <div class="field"><label>Gas group</label><select>
+                      <option>IIC</option>
+                      <option>IIB</option>
+                      <option>IIA</option>
+                    </select></div>
+                  <div class="field"><label>Temperature class</label><select>
+                      <option>T4</option>
+                      <option>T1</option>
+                      <option>T2</option>
+                      <option>T3</option>
+                      <option>T5</option>
+                      <option>T6</option>
+                    </select></div>
+                  <div class="field"><label>Protection concept</label><select>
+                      <option>Ex ia</option>
+                      <option>Ex ib</option>
+                      <option>Ex d</option>
+                      <option>Ex e</option>
+                    </select></div>
+                  <div class="field"><label>EPL target</label><select>
+                      <option>Gb</option>
+                      <option>Ga</option>
+                    </select></div>
+                  <div class="field"><label>Max non-IS supply Um (V)</label><input type="number" value="24"></div>
+                </div>
+                <div class="field"><label>Intended use description</label><textarea
+                    style="height:80px">Battery powered wireless gas sensor with sealed enclosure, 24V service input, IIC gas group, and continuous refinery monitoring duty.</textarea>
+                </div>
+                <div class="annotation mt-12">
+                  <strong class="text-green">Zone 1 recommended</strong> — Low-energy architecture, intrinsic-safety
+                  intent, and sealed enclosure evidence align with a strong Zone 1 path. Confidence: 88%
+                </div>
+              </div>
+              <!-- Step 1 placeholder -->
+              <div class="wizard-step-panel" data-panel="1" style="display:none">
+                <div
+                  style="border:2px dashed var(--border);border-radius:12px;padding:32px;text-align:center;margin-bottom:16px">
+                  <div style="font-size:32px;margin-bottom:8px">↑</div>
+                  <div class="fw-500 mb-8">Gerber, STEP, PDF, netlist, CSV, XLSX</div>
+                  <div class="text-dim fs-12">Drag files into the Exovanta parse queue</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <div
+                    style="background:var(--bg-3);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:12px">
+                    <span class="mono fs-11 text-green">PCB</span>
+                    <div style="flex:1">
+                      <div class="fw-500 fs-12">sensor-v42.GBR</div>
+                      <div class="text-dim fs-11">6 layers, min track 0.18mm</div>
+                    </div>
+                    <span class="pill pill-good">Parsed</span>
+                  </div>
+                  <div
+                    style="background:var(--bg-3);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:12px">
+                    <span class="mono fs-11 text-amber">3D</span>
+                    <div style="flex:1">
+                      <div class="fw-500 fs-12">enclosure.step</div>
+                      <div class="text-dim fs-11">112mm × 64mm × 28mm detected</div>
+                    </div>
+                    <span class="pill pill-watch">Parsing</span>
+                  </div>
+                  <div
+                    style="background:var(--bg-3);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:12px">
+                    <span class="mono fs-11 text-blue">PDF</span>
+                    <div style="flex:1">
+                      <div class="fw-500 fs-12">exovanta-plan.pdf</div>
+                      <div class="text-dim fs-11">IEC 60079-0 Cl.24 section found</div>
+                    </div>
+                    <span class="pill pill-good">Parsed</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Steps 2–4 placeholders -->
+              <div class="wizard-step-panel" data-panel="2" style="display:none">
+                <div class="annotation">Step 3: Component-level and mechanical data packs. Upload BOM, barrier
+                  datasheets, and STEP/IGES enclosure files.</div>
+              </div>
+              <div class="wizard-step-panel" data-panel="3" style="display:none">
+                <div class="grid cols-2" style="gap:12px">
+                  <div class="field"><label>Ambient min (°C)</label><input type="number" value="-20"></div>
+                  <div class="field"><label>Ambient max (°C)</label><input type="number" value="55"></div>
+                  <div class="field"><label>Humidity</label><input value="Damp with intermittent condensation"></div>
+                  <div class="field"><label>Altitude band</label><input value="0–2000 m"></div>
+                  <div class="field"><label>Vibration / shock</label><input value="IEC 60068-2-6 light industrial">
+                  </div>
+                  <div class="field"><label>Gas / dust description</label><input
+                      value="Hydrogen-rich, no dust zone declared"></div>
+                </div>
+              </div>
+              <div class="wizard-step-panel" data-panel="4" style="display:none">
+                <div class="grid cols-2" style="gap:12px;margin-bottom:16px">
+                  <div style="background:var(--bg-3);border-radius:10px;padding:14px">
+                    <div class="fs-11 text-dim">Project</div>
+                    <div class="fw-600 mt-8">Exovanta Sentinel</div>
+                    <div class="fs-12 text-muted mt-8">EXO-SEN-42 / Zone 1 / Ex ia / Gb</div>
+                  </div>
+                  <div style="background:var(--bg-3);border-radius:10px;padding:14px">
+                    <div class="fs-11 text-dim">Environment</div>
+                    <div class="fw-600 mt-8">-20°C to 55°C</div>
+                    <div class="fs-12 text-muted mt-8">Damp with condensation</div>
+                  </div>
+                </div>
+                <button class="btn btn-primary" style="width:100%">
+                  <svg width="14" height="14" viewBox="0 0 14 14">
+                    <path d="M7 1l5 3v6l-5 3-5-3V4l5-3z" stroke="currentColor" stroke-width="1.4" fill="none" />
+                  </svg>
+                  Queue Exovanta Simulation Run
+                </button>
+              </div>
+            </div>
+
+            <!-- Sidebar completion -->
+            <div class="card" style="align-self:start;position:sticky;top:80px">
+              <div class="card-eyebrow mb-8">Input readiness</div>
+              <div class="card-title mb-12">Checklist coverage</div>
+              <div
+                style="position:relative;height:6px;background:var(--bg-4);border-radius:4px;margin-bottom:8px;overflow:hidden">
+                <div style="position:absolute;inset:0;width:72%;background:var(--green);border-radius:4px"></div>
+              </div>
+              <div class="flex items-center justify-between mb-12">
+                <span class="fw-600 text-green">28/38</span>
+                <span class="fs-11 text-dim">required inputs</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div
+                  style="background:var(--bg-3);border-radius:7px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center">
+                  <span class="fs-12">Project & Zone</span><span class="pill pill-good">6/6</span>
+                </div>
+                <div
+                  style="background:var(--bg-3);border-radius:7px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center">
+                  <span class="fs-12">Electrical</span><span class="pill pill-good">3/4</span>
+                </div>
+                <div
+                  style="background:var(--bg-3);border-radius:7px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center">
+                  <span class="fs-12">Components</span><span class="pill pill-watch">3/6</span>
+                </div>
+                <div
+                  style="background:var(--bg-3);border-radius:7px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center">
+                  <span class="fs-12">Mechanical</span><span class="pill pill-watch">2/4</span>
+                </div>
+                <div
+                  style="background:var(--bg-3);border-radius:7px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center">
+                  <span class="fs-12">Environment</span><span class="pill pill-good">6/6</span>
+                </div>
+                <div
+                  style="background:var(--bg-3);border-radius:7px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center">
+                  <span class="fs-12">Documentation</span><span class="pill pill-risk">2/4</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-between mt-16">
+            <button class="btn btn-ghost" onclick="prevStep()">← Back</button>
+            <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SIMULATIONS ─────────────────────────────────────── -->
+      <section class="screen" id="view-simulations">
+        <div class="flex items-center justify-between mb-12" style="margin-bottom:16px">
+          <div>
+            <div class="card-eyebrow">9 AI simulation engines</div>
+            <h2 style="font-size:20px;font-weight:600;letter-spacing:-0.3px">Simulation Engine</h2>
+          </div>
+          <div class="flex gap-8">
+            <button class="btn btn-ghost">⏸ Pause all</button>
+            <button class="btn btn-primary">▶ Run all</button>
+          </div>
+        </div>
+        <div class="sim-grid" id="sim-cards"></div>
+      </section>
+
+      <!-- ── GAPS ───────────────────────────────────────────── -->
+      <section class="screen" id="view-gaps">
+        <div class="flex items-center justify-between mb-12" style="margin-bottom:16px">
+          <div>
+            <div class="card-eyebrow">Compliance action register</div>
+            <h2 style="font-size:20px;font-weight:600;letter-spacing:-0.3px">Gap Report</h2>
+          </div>
+          <div class="flex gap-8">
+            <button class="btn btn-ghost" id="filter-all" onclick="filterGaps('All')">All</button>
+            <button class="btn btn-ghost" onclick="filterGaps('Critical')">Critical</button>
+            <button class="btn btn-ghost" onclick="filterGaps('Major')">Major</button>
+            <button class="btn btn-ghost" onclick="filterGaps('Minor')">Minor</button>
+          </div>
+        </div>
+        <div class="grid" style="grid-template-columns:7fr 4fr;gap:16px">
+          <div class="card">
+            <div class="gap-row-head">
+              <span>Simulation</span><span>Clause</span><span>Gap
+                description</span><span>Severity</span><span>Status</span>
+            </div>
+            <div id="gap-list"></div>
+          </div>
+          <div class="card" id="gap-detail" style="align-self:start;position:sticky;top:80px">
+            <div class="card-eyebrow mb-8">One-click drill-down</div>
+            <div id="gap-detail-inner">
+              <div class="text-dim fs-12">Select a gap to see details</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SCORECARD ─────────────────────────────────────────── -->
+      <section class="screen" id="view-scorecard">
+        <div class="grid cols-5-3" style="grid-template-columns:5fr 7fr;gap:16px;margin-bottom:16px">
+          <div class="card" style="display:flex;flex-direction:column;justify-content:space-between">
+            <div>
+              <div class="card-eyebrow mb-8">Overall readiness score</div>
+              <div class="big-score">84<span>%</span></div>
+              <div class="text-dim fs-12 mt-8">Zone 0: 61% · Zone 1: 84% ready</div>
+            </div>
+            <div class="divider"></div>
+            <div class="flex gap-8">
+              <button class="btn btn-primary" style="flex:1">↗ Share Scorecard</button>
+              <button class="btn btn-ghost" style="flex:1">↓ Export PDF</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-eyebrow">Certification confidence</div>
+                <div class="card-title">6 compliance dimensions</div>
+              </div>
+            </div>
+            <div class="dim-grid" id="dim-rings"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-eyebrow">Score history</div>
+              <div class="card-title">Improvement across iterations</div>
+            </div>
+            <span class="pill pill-good"><span class="pill-dot"></span>Complete</span>
+          </div>
+          <div class="chart-wrap" style="height:220px">
+            <canvas id="scoreChart" role="img"
+              aria-label="Line chart showing readiness improvement from baseline 48% to current 84% overall, zone 0 from 31% to 61%, zone 1 from 57% to 84%">Score
+              history data</canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── TECHNICAL FILE ─────────────────────────────────────── -->
+      <section class="screen" id="view-techfile">
+        <div class="flex items-center justify-between mb-12" style="margin-bottom:16px">
+          <div>
+            <div class="card-eyebrow">Auto-populated evidence document</div>
+            <h2 style="font-size:20px;font-weight:600;letter-spacing:-0.3px">Explosion Protection Technical File</h2>
+          </div>
+          <div class="flex gap-8">
+            <button class="btn btn-ghost">PDF</button>
+            <button class="btn btn-ghost">DOCX</button>
+            <button class="btn btn-primary">↓ Export</button>
+          </div>
+        </div>
+        <div class="grid" style="grid-template-columns:240px 1fr 200px;gap:16px">
+          <!-- Sections -->
+          <div class="card" style="align-self:start">
+            <div class="card-eyebrow mb-12">Section completion</div>
+            <div id="tech-sections"></div>
+          </div>
+          <!-- Editor -->
+          <div class="card">
+            <div class="card-eyebrow mb-8">Live editor</div>
+            <div style="font-family:var(--font);font-size:13.5px;line-height:1.8;color:var(--ink-2)">
+              <h3 style="font-size:16px;font-weight:600;color:var(--ink);margin-bottom:10px">Explosion Protection
+                Technical File — EXO-1042</h3>
+              <p class="mb-8">The equipment is a battery-assisted wireless sensing device intended for Zone 1 hazardous
+                area deployment. The current certification path is <strong class="text-green">Ex ia IIC T4 Gb</strong>,
+                supported by live simulation evidence from SIM-01, SIM-02, SIM-05, SIM-07, and SIM-09.</p>
+              <p class="mb-8">The thermal assessment links the FEM enclosure model to component-level dissipation values
+                and confirms that remaining T-class risk is limited to the regulator shield region pending design
+                update.</p>
+              <p>Evidence from routine test protocols, dielectric assessment, and installation marking will be attached
+                prior to notified body submission. The documentation completeness metric currently stands at 74% with
+                one pending manager sign-off.</p>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+              <button class="btn btn-ghost">Version history</button>
+              <button class="btn btn-ghost">Link evidence</button>
+            </div>
+          </div>
+          <!-- Citations -->
+          <div class="card" style="align-self:start">
+            <div class="card-eyebrow mb-12">Clause citations</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="background:var(--bg-3);border-radius:7px;padding:8px 10px">
+                <div class="fw-500 fs-12">IEC 60079-0 Cl.24.2</div>
+                <div class="text-dim fs-11">PDF p.118</div>
+                <span class="pill pill-good mt-8">Verified</span>
+              </div>
+              <div style="background:var(--bg-3);border-radius:7px;padding:8px 10px">
+                <div class="fw-500 fs-12">IEC 60079-11 Table 5</div>
+                <div class="text-dim fs-11">PDF p.42</div>
+                <span class="pill pill-good mt-8">Verified</span>
+              </div>
+              <div style="background:var(--bg-3);border-radius:7px;padding:8px 10px">
+                <div class="fw-500 fs-12">IEC 60079-0 Cl.5.3.2</div>
+                <div class="text-dim fs-11">PDF p.31</div>
+                <span class="pill pill-good mt-8">Verified</span>
+              </div>
+              <div style="background:var(--bg-3);border-radius:7px;padding:8px 10px">
+                <div class="fw-500 fs-12">IEC 60079-11 Cl.6.3.12</div>
+                <div class="text-dim fs-11">PDF p.57</div>
+                <span class="pill pill-watch mt-8">In Review</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── ANALYTICS ────────────────────────────────────────── -->
+      <section class="screen" id="view-analytics">
+        <div class="card-eyebrow mb-8">Portfolio intelligence</div>
+        <h2 style="font-size:20px;font-weight:600;letter-spacing:-0.3px;margin-bottom:16px">Analytics</h2>
+        <div class="grid cols-2" style="gap:16px;margin-bottom:16px">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-eyebrow">Portfolio overview</div>
+                <div class="card-title">Readiness by product type</div>
+              </div>
+            </div>
+            <div class="chart-wrap" style="height:220px"><canvas id="analyticsChart" role="img"
+                aria-label="Bar chart showing readiness scores by product type">Analytics data</canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-eyebrow">Industry benchmark</div>
+                <div class="card-title">Anonymised comparison</div>
+              </div>
+            </div>
+            <div class="chart-wrap" style="height:220px"><canvas id="benchmarkChart" role="img"
+                aria-label="Horizontal bar chart comparing your product 84% to industry benchmarks">Benchmark
+                data</canvas></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-eyebrow">Gap trend</div>
+              <div class="card-title">Learning curve across projects</div>
+            </div>
+          </div>
+          <div class="chart-wrap" style="height:220px"><canvas id="gapTrendChart" role="img"
+              aria-label="Stacked area chart showing gap reduction over 5 months">Gap trend data</canvas></div>
+        </div>
+      </section>
+
+      <!-- ── TWIN PLACEHOLDER ─────────────────────────────────── -->
+      <section class="screen" id="view-twin">
+        <div class="card-eyebrow mb-8">3D / PCB live overlay</div>
+        <h2 style="font-size:20px;font-weight:600;letter-spacing:-0.3px;margin-bottom:16px">Digital Twin</h2>
+        <div class="grid cols-2 gap-12">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-eyebrow">3D enclosure thermal map</div>
+                <div class="card-title">CAD-based digital twin</div>
+              </div><span class="pill pill-watch">Running</span>
+            </div>
+            <!-- PCB SVG visualization -->
+            <svg viewBox="0 0 480 280" style="width:100%;border-radius:8px;background:#0d1a17">
+              <defs>
+                <linearGradient id="heatGrad" x1="0" x2="1">
+                  <stop offset="0" stop-color="#1fa87a" stop-opacity="0.3" />
+                  <stop offset="0.6" stop-color="#f0b040" stop-opacity="0.4" />
+                  <stop offset="1" stop-color="#ff5c5c" stop-opacity="0.6" />
+                </linearGradient>
+              </defs>
+              <rect x="20" y="20" width="440" height="240" rx="8" fill="#0d2318" />
+              <rect x="40" y="40" width="400" height="200" rx="6" fill="#1a3d2e" />
+              <rect x="40" y="40" width="400" height="200" rx="6" fill="url(#heatGrad)" />
+              <!-- PCB traces -->
+              <g stroke="#2df0a8" stroke-width="6" stroke-linecap="round" opacity="0.7">
+                <path d="M80 80 H200 V130 H310 V200 H420" fill="none" />
+                <path d="M88 190 H170 V155 H260 V90 H400" fill="none" />
+              </g>
+              <!-- Components -->
+              <rect x="170" y="108" width="64" height="44" rx="5" fill="#0d1a17" />
+              <rect x="170" y="108" width="64" height="44" rx="5" fill="none" stroke="#2df0a8" stroke-width="1.5"
+                opacity="0.6" />
+              <text x="202" y="130" font-size="9" fill="#2df0a8" text-anchor="middle" opacity="0.9">U3</text>
+              <rect x="308" y="72" width="56" height="38" rx="5" fill="#0d1a17" />
+              <rect x="308" y="72" width="56" height="38" rx="5" fill="none" stroke="#4da8ff" stroke-width="1.5"
+                opacity="0.6" />
+              <text x="336" y="91" font-size="9" fill="#4da8ff" text-anchor="middle" opacity="0.9">RF</text>
+              <!-- Hot spot -->
+              <circle cx="225" cy="115" r="16" fill="#ff5c5c" opacity="0.7" />
+              <circle cx="225" cy="115" r="10" fill="#ff5c5c" opacity="0.9" />
+              <text x="225" y="119" font-size="8" fill="white" text-anchor="middle" font-weight="bold">HOT</text>
+              <!-- Separation lines -->
+              <line x1="234" y1="130" x2="308" y2="91" stroke="#f0b040" stroke-width="2" stroke-dasharray="4,3"
+                opacity="0.8" />
+              <text x="271" y="104" font-size="9" fill="#f0b040" opacity="0.9">+0.4mm needed</text>
+            </svg>
+            <div class="flex gap-8 mt-12">
+              <span class="pill pill-risk">U3 hotspot 132.8°C</span>
+              <span class="pill pill-watch">RF module 96.4°C</span>
+              <span class="pill pill-good">Sensor bridge 74.1°C</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-eyebrow">Spark energy node map</div>
+                <div class="card-title">Risk-scaled schematic nodes</div>
+              </div>
+            </div>
+            <svg viewBox="0 0 440 260" style="width:100%">
+              <g stroke="rgba(255,255,255,0.12)" stroke-width="2">
+                <line x1="80" y1="100" x2="190" y2="65" />
+                <line x1="190" y1="65" x2="300" y2="110" />
+                <line x1="300" y1="110" x2="390" y2="70" />
+                <line x1="190" y1="65" x2="240" y2="190" />
+              </g>
+              <circle cx="80" cy="100" r="28" fill="#ff5c5c" opacity="0.85" />
+              <text x="80" y="95" font-size="9" fill="white" text-anchor="middle"
+                dominant-baseline="middle">N-24V</text>
+              <text x="80" y="106" font-size="8" fill="rgba(255,255,255,0.7)" text-anchor="middle">Critical</text>
+              <circle cx="190" cy="65" r="20" fill="#f0b040" opacity="0.85" />
+              <text x="190" y="65" font-size="9" fill="white" text-anchor="middle"
+                dominant-baseline="middle">U3.OUT</text>
+              <circle cx="300" cy="110" r="15" fill="#4da8ff" opacity="0.85" />
+              <text x="300" y="110" font-size="9" fill="white" text-anchor="middle"
+                dominant-baseline="middle">SENS+</text>
+              <circle cx="390" cy="70" r="12" fill="#00e5a0" opacity="0.85" />
+              <text x="390" y="70" font-size="9" fill="#051210" text-anchor="middle"
+                dominant-baseline="middle">GND</text>
+              <circle cx="240" cy="190" r="17" fill="#a78bfa" opacity="0.85" />
+              <text x="240" y="190" font-size="9" fill="white" text-anchor="middle" dominant-baseline="middle">RF</text>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- COPILOT FAB -->
+  <button class="fab" onclick="toggleCopilot()" title="AI Copilot">✦</button>
+
+  <div class="copilot-panel" id="copilot-panel">
+    <div class="copilot-header">
+      <div class="copilot-header-dot"></div>
+      <div class="copilot-title">Exovanta AI Copilot</div>
+      <button class="btn-icon" onclick="toggleCopilot()">✕</button>
+    </div>
+    <div class="copilot-msgs" id="copilot-msgs">
+      <div class="msg msg-ai">Ask anything about Exovanta, ATEX/IECEx standards, or the current project workflow. I can
+        help resolve gaps, explain clauses, or guide you through the next certification step.</div>
+      <div class="msg msg-ai" style="background:var(--bg-3);border:1px solid rgba(0,229,160,0.15)">
+        <div class="fs-11 text-green mb-8">💡 Suggestion — SIM-05 gap closure</div>
+        Your Ex ia budget is now zero for the U3 branch. Increase track separation at U3 pin 4 before rerunning SIM-01.
+        <span class="text-dim mono fs-11">IEC 60079-11 Cl.6.3.12 · 92%</span>
+      </div>
+    </div>
+    <div class="copilot-input-row">
+      <input class="copilot-input" id="copilot-input" placeholder="Ask about a feature, gap, or standard…"
+        onkeydown="if(event.key==='Enter')sendCopilot()">
+      <button class="copilot-send" onclick="sendCopilot()">→</button>
+    </div>
+  </div>
+
+  <!-- Chart.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script>
+    const SIMULATIONS = [
+      { id: 'SIM-05', name: 'Separation Distance', domain: 'Fault classification', score: 91, status: 'Complete', progress: 100, step: 8, eta: '0m', color: 'green', clause: 'IEC 60079-11 Cl.6.3' },
+      { id: 'SIM-01', name: 'Spark Energy Budget', domain: 'Intrinsic safety', score: 78, status: 'Running', progress: 68, step: 5, eta: '9m', color: 'amber', clause: 'IEC 60079-11 Table 5' },
+      { id: 'SIM-02', name: 'FEM Thermal Rise', domain: 'Thermal compliance', score: 82, status: 'Running', progress: 73, step: 6, eta: '6m', color: 'amber', clause: 'IEC 60079-0 Cl.5.3' },
+      { id: 'SIM-06', name: 'Component T-Class', domain: 'Temperature class', score: 88, status: 'Running', progress: 58, step: 4, eta: '11m', color: 'green', clause: 'IEC 60079-0 Table 2a/2b' },
+      { id: 'SIM-07', name: 'Documentation Evidence', domain: 'Technical file', score: 74, status: 'Needs review', progress: 86, step: 7, eta: '3m', color: 'amber', clause: 'IEC 60079-0 Cl.24' },
+      { id: 'SIM-08', name: 'Ingress & Enclosure', domain: 'Mechanical protection', score: 93, status: 'Complete', progress: 100, step: 8, eta: '0m', color: 'green', clause: 'IEC 60079-0 Cl.26' },
+      { id: 'SIM-03', name: 'PCB Track T-Class', domain: 'Track thermal class', score: 64, status: 'Blocked', progress: 22, step: 2, eta: 'waiting', color: 'red', clause: 'IEC 60079-11 Annex F' },
+      { id: 'SIM-04', name: 'Friction Hotspots', domain: 'Mechanical ignition', score: 69, status: 'Queued', progress: 18, step: 1, eta: 'waiting', color: 'amber', clause: 'IEC 60079-0 Cl.8' },
+      { id: 'SIM-09', name: 'Final Zone Sweep', domain: 'Certification path', score: 84, status: 'Locked', progress: 0, step: 0, eta: 'final', color: 'amber', clause: 'IEC 60079-0/-11 final' }
+    ];
+
+    const GAPS = [
+      { id: 'GAP-118', sim: 'SIM-05', clause: 'IEC 60079-11 Cl.6.3.12', desc: 'Countable fault budget exceeded on U3.4 to J2.1', severity: 'Critical', status: 'Open', component: 'U3 pin 4', fix: 'Increase creepage by 0.4mm or introduce a conformal barrier route.', margin: '+18% separation margin', downstream: 'SIM-01, SIM-09' },
+      { id: 'GAP-106', sim: 'SIM-02', clause: 'IEC 60079-0 Cl.5.3.2', desc: 'Enclosure hotspot exceeds T4 class under 55°C ambient by 3.2°C', severity: 'Major', status: 'In Review', component: 'Regulator shield', fix: 'Move regulator 6mm from sealed rib and add two thermal vias.', margin: '+5.8°C thermal headroom', downstream: 'SIM-06, SIM-09' },
+      { id: 'GAP-097', sim: 'SIM-07', clause: 'IEC 60079-0 Cl.24.2', desc: 'Technical file missing routine dielectric test method evidence link', severity: 'Minor', status: 'Fixed', component: 'Technical file', fix: 'Attach generated dielectric protocol and manager sign-off.', margin: '+9% documentation completeness', downstream: 'Technical file' },
+      { id: 'GAP-089', sim: 'SIM-03', clause: 'IEC 60079-11 Annex F', desc: 'Copper track T-class margin unknown until SIM-02 final boundary signed', severity: 'Major', status: 'Open', component: 'L2 power rail', fix: 'Re-run with final enclosure thermal map and 2oz copper assumption.', margin: '+12% modeled headroom', downstream: 'SIM-04, SIM-09' }
+    ];
+
+    const SCORE_DIMS = [
+      { label: 'Standards Coverage', score: 92, color: '#00e5a0' },
+      { label: 'Thermal Compliance', score: 81, color: '#f0b040' },
+      { label: 'Spark Safety', score: 76, color: '#ff5c5c' },
+      { label: 'Separation Compliance', score: 88, color: '#4da8ff' },
+      { label: 'Documentation', score: 74, color: '#a78bfa' },
+      { label: 'Cert Path Confidence', score: 86, color: '#00d9c4' }
+    ];
+
+    const LIVE_EVENTS = [
+      { kind: 'complete', actor: 'AI-17', text: 'SIM-05 completed: 2 countable faults detected near U3', time: 'now' },
+      { kind: 'gap', actor: 'AI-05', text: 'Major gap raised for IEC 60079-11 Cl.6.3.12 clearance margin', time: '2m' },
+      { kind: 'recommend', actor: 'Copilot', text: 'Increase separation at U3 pin 4 by 0.4mm', time: '4m' },
+      { kind: 'action', actor: 'Maya R.', text: 'Compliance manager approved thermal evidence link', time: '8m' }
+    ];
+
+    const TECH_SECTIONS = [
+      { name: 'Product description', complete: 100, evidence: 'BOM + enclosure STEP' },
+      { name: 'Standards matrix', complete: 92, evidence: 'AI-05 clause mapping' },
+      { name: 'Ignition hazard assessment', complete: 78, evidence: 'SIM-01 / SIM-05' },
+      { name: 'Thermal assessment', complete: 83, evidence: 'SIM-02 FEM report' },
+      { name: 'Routine test method', complete: 46, evidence: 'SIM-07 draft needed' },
+      { name: 'Marking schedule', complete: 69, evidence: 'SIM-09 pending' }
+    ];
+
+    // ── RADIAL RING HELPER ──────────────────────────────────────
+    function radialRing(score, label, color, size = 64, textSize = 13) {
+      const r = size * 0.35;
+      const c = size / 2;
+      const circ = 2 * Math.PI * r;
+      const offset = circ - (score / 100) * circ;
+      return `<div class="ring-wrap">
+    <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible">
+      <circle class="ring-track" cx="${c}" cy="${c}" r="${r}" stroke-width="${size * 0.1}"/>
+      <circle class="ring-progress" cx="${c}" cy="${c}" r="${r}" stroke="${color}" stroke-width="${size * 0.1}"
+        stroke-dasharray="${circ}" stroke-dashoffset="${offset}" transform="rotate(-90 ${c} ${c})"/>
+      <text x="${c}" y="${c}" text-anchor="middle" font-size="${textSize}" font-weight="600" fill="${color}" dominant-baseline="middle">${score}</text>
+    </svg>
+    <div class="ring-label">${label}</div>
+  </div>`;
+    }
+
+    // ── RENDER SIM RINGS ─────────────────────────────────────────
+    function renderSimRings() {
+      const el = document.getElementById('sim-rings');
+      if (!el) return;
+      const colors = { green: '#00e5a0', amber: '#f0b040', red: '#ff5c5c' };
+      el.innerHTML = SIMULATIONS.map(s =>
+        radialRing(s.score, s.id, colors[s.color] || '#666', 70, 13)
+      ).join('');
+    }
+
+    // ── RENDER DIMENSION RINGS ───────────────────────────────────
+    function renderDimRings() {
+      const el = document.getElementById('dim-rings');
+      if (!el) return;
+      el.innerHTML = SCORE_DIMS.map(d =>
+        `<div>${radialRing(d.score, d.label, d.color, 80, 14)}</div>`
+      ).join('');
+    }
+
+    // ── LIVE FEED ────────────────────────────────────────────────
+    function renderLiveFeed() {
+      const el = document.getElementById('live-feed');
+      if (!el) return;
+      el.innerHTML = LIVE_EVENTS.map(e => `
+    <div class="feed-item">
+      <div class="feed-dot ${e.kind}"></div>
+      <div style="flex:1">
+        <div class="feed-actor">${e.actor} <span style="font-weight:400;color:var(--ink-3);font-size:10px">${e.time}</span></div>
+        <div class="feed-text">${e.text}</div>
+      </div>
+    </div>
+  `).join('');
+    }
+
+    // ── SIM CARDS ────────────────────────────────────────────────
+    function renderSimCards() {
+      const el = document.getElementById('sim-cards');
+      if (!el) return;
+      const statusClass = { Complete: 'complete', Running: 'running', 'Needs review': 'running', Blocked: 'blocked', Queued: 'locked', Locked: 'locked' };
+      const pillClass = { Complete: 'pill-good', Running: 'pill-watch', 'Needs review': 'pill-watch', Blocked: 'pill-risk', Queued: 'pill-neutral', Locked: 'pill-neutral' };
+      el.innerHTML = SIMULATIONS.map(s => {
+        const prog = s.progress;
+        const pc = prog > 0 ? (s.color === 'green' ? 'prog-good' : s.color === 'red' ? 'prog-risk' : 'prog-watch') : 'prog-neutral';
+        return `<div class="sim-card ${statusClass[s.status] || ''}">
+      <div class="flex items-center justify-between mb-8">
+        <span class="sim-id">${s.id}</span>
+        <span class="pill ${pillClass[s.status] || 'pill-neutral'}">${s.status}</span>
+      </div>
+      <div class="sim-name">${s.name}</div>
+      <div class="sim-domain text-dim fs-11 mb-8">${s.domain}</div>
+      <div class="prog-track"><div class="prog-fill ${pc}" style="width:${prog}%"></div></div>
+      <div class="sim-footer">
+        <span class="sim-step">Step ${s.step}/8</span>
+        <span class="sim-step text-dim">${s.clause}</span>
+        <span class="sim-step">ETA ${s.eta}</span>
+      </div>
+    </div>`;
+      }).join('');
+    }
+
+    // ── GAPS ────────────────────────────────────────────────────
+    let gapFilter = 'All';
+    function filterGaps(f) { gapFilter = f; renderGaps(); }
+    function renderGaps() {
+      const el = document.getElementById('gap-list');
+      if (!el) return;
+      const pc = { Critical: 'pill-risk', Major: 'pill-watch', Minor: 'pill-neutral' };
+      const sc = { Open: 'pill-risk', 'In Review': 'pill-watch', Fixed: 'pill-good', Verified: 'pill-good' };
+      const filtered = gapFilter === 'All' ? GAPS : GAPS.filter(g => g.severity === gapFilter);
+      el.innerHTML = filtered.map(g => `
+    <button class="gap-row" onclick="showGapDetail('${g.id}')">
+      <span class="gap-sim">${g.sim}</span>
+      <span class="gap-clause">${g.clause}</span>
+      <strong class="gap-desc">${g.desc}</strong>
+      <span class="pill ${pc[g.severity] || 'pill-neutral'}">${g.severity}</span>
+      <span class="pill ${sc[g.status] || 'pill-neutral'}">${g.status}</span>
+    </button>
+  `).join('');
+    }
+    function showGapDetail(id) {
+      const g = GAPS.find(x => x.id === id);
+      if (!g) return;
+      const sc = { Open: 'pill-risk', 'In Review': 'pill-watch', Fixed: 'pill-good', Verified: 'pill-good' };
+      const pc = { Critical: 'pill-risk', Major: 'pill-watch', Minor: 'pill-neutral' };
+      document.getElementById('gap-detail-inner').innerHTML = `
+    <div style="display:flex;gap:6px;margin-bottom:10px">
+      <span class="pill ${pc[g.severity]}">${g.severity}</span>
+      <span class="pill ${sc[g.status]}">${g.status}</span>
+    </div>
+    <div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:6px">${g.id}</div>
+    <div class="fs-12 text-muted mb-12" style="line-height:1.5">${g.desc}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;margin-bottom:14px">
+      <span class="text-dim">Clause</span><span class="text-blue mono">${g.clause}</span>
+      <span class="text-dim">Component</span><span class="fw-500">${g.component}</span>
+      <span class="text-dim">Downstream</span><span class="mono fs-11">${g.downstream}</span>
+    </div>
+    <div class="fix-box">
+      <div class="fix-title">Fix recommendation</div>
+      <div class="fix-body">${g.fix}</div>
+      <div class="fix-margin">${g.margin}</div>
+    </div>
+    <div style="display:flex;gap:4px;margin-top:14px;flex-wrap:wrap">
+      ${['Open', 'In Review', 'Fixed', 'Verified'].map(s => `<span style="font-size:10px;padding:3px 7px;border-radius:5px;background:${g.status === s ? 'rgba(0,229,160,0.15)' : 'var(--bg-4)'};color:${g.status === s ? 'var(--green)' : 'var(--ink-3)'}">${s}</span>`).join('')}
+    </div>
+  `;
+    }
+
+    // ── TECH FILE SECTIONS ───────────────────────────────────────
+    function renderTechSections() {
+      const el = document.getElementById('tech-sections');
+      if (!el) return;
+      el.innerHTML = TECH_SECTIONS.map(s => {
+        const c = s.complete > 80 ? 'prog-good' : s.complete > 55 ? 'prog-watch' : 'prog-risk';
+        return `<div class="section-row">
+      <div style="flex:1">
+        <div class="fw-500 fs-12">${s.name}</div>
+        <div class="text-dim fs-11 mono">${s.evidence}</div>
+        <div class="prog-track mt-8"><div class="prog-fill ${c}" style="width:${s.complete}%"></div></div>
+      </div>
+      <span class="fs-11 fw-500 ${s.complete > 80 ? 'text-green' : s.complete > 55 ? 'text-amber' : 'text-red'}">${s.complete}%</span>
+    </div>`;
+      }).join('');
+    }
+
+    // ── CHARTS ──────────────────────────────────────────────────
+    function initCharts() {
+      Chart.defaults.color = 'rgba(159,184,178,0.9)';
+      Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+
+      const scoreCtx = document.getElementById('scoreChart');
+      if (scoreCtx) {
+        new Chart(scoreCtx, {
+          type: 'line',
+          data: {
+            labels: ['Baseline', 'Upload parse', 'Thermal fix', 'Spacing rev', 'Current'],
+            datasets: [
+              { label: 'Overall', data: [48, 56, 67, 79, 84], borderColor: '#00e5a0', backgroundColor: 'rgba(0,229,160,0.08)', borderWidth: 2.5, pointBackgroundColor: '#00e5a0', tension: 0.4, fill: true, pointStyle: 'circle', pointBorderColor: '#00e5a0' },
+              { label: 'Zone 0', data: [31, 39, 48, 58, 61], borderColor: '#ff5c5c', backgroundColor: 'transparent', borderWidth: 2, borderDash: [4, 2], tension: 0.4, pointStyle: 'triangle' },
+              { label: 'Zone 1', data: [57, 64, 74, 83, 84], borderColor: '#4da8ff', backgroundColor: 'transparent', borderWidth: 2, borderDash: [4, 2], tension: 0.4, pointStyle: 'rectRot' }
+            ]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            scales: {
+              y: { min: 20, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { callback: v => v + '%' } },
+              x: { grid: { color: 'rgba(255,255,255,0.05)' } }
+            },
+            plugins: { legend: { display: false } }
+          }
+        });
+      }
+
+      const analyticsCtx = document.getElementById('analyticsChart');
+      if (analyticsCtx) {
+        new Chart(analyticsCtx, {
+          type: 'bar',
+          data: {
+            labels: ['Wireless sensor', 'Inspection robot', 'Handheld', 'Motor driver'],
+            datasets: [
+              { label: 'Readiness %', data: [84, 72, 91, 68], backgroundColor: ['rgba(0,229,160,0.7)', 'rgba(240,176,64,0.7)', 'rgba(0,229,160,0.9)', 'rgba(255,92,92,0.7)'], borderRadius: 6, borderSkipped: false }
+            ]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            scales: { y: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { callback: v => v + '%' } }, x: { grid: { display: false } } },
+            plugins: { legend: { display: false } }
+          }
+        });
+      }
+
+      const benchCtx = document.getElementById('benchmarkChart');
+      if (benchCtx) {
+        new Chart(benchCtx, {
+          type: 'bar',
+          data: {
+            labels: ['Your product', 'Wireless sensors', 'IIC portfolio', 'Top quartile'],
+            datasets: [{
+              label: 'Readiness', data: [84, 74, 69, 88],
+              backgroundColor: ['rgba(0,229,160,0.8)', 'rgba(77,168,255,0.5)', 'rgba(77,168,255,0.5)', 'rgba(77,168,255,0.5)'],
+              borderRadius: 5, borderSkipped: false
+            }]
+          },
+          options: {
+            indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+            scales: { x: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { callback: v => v + '%' } }, y: { grid: { display: false } } },
+            plugins: { legend: { display: false } }
+          }
+        });
+      }
+
+      const gapCtx = document.getElementById('gapTrendChart');
+      if (gapCtx) {
+        new Chart(gapCtx, {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+            datasets: [
+              { label: 'Separation', data: [18, 15, 12, 8, 6], borderColor: '#4da8ff', backgroundColor: 'rgba(77,168,255,0.15)', fill: true, tension: 0.4, borderWidth: 2, pointStyle: 'circle', pointBackgroundColor: '#4da8ff' },
+              { label: 'Thermal', data: [12, 11, 9, 7, 5], borderColor: '#f0b040', backgroundColor: 'rgba(240,176,64,0.12)', fill: true, tension: 0.4, borderWidth: 2, pointStyle: 'triangle', pointBackgroundColor: '#f0b040' },
+              { label: 'Documentation', data: [19, 14, 11, 8, 6], borderColor: '#a78bfa', backgroundColor: 'rgba(167,139,250,0.10)', fill: true, tension: 0.4, borderWidth: 2, pointStyle: 'rectRot', pointBackgroundColor: '#a78bfa' }
+            ]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { color: 'rgba(255,255,255,0.05)' } } },
+            plugins: { legend: { display: false } }
+          }
+        });
+      }
+    }
+
+    // ── NAVIGATION ──────────────────────────────────────────────
+    const TITLES = {
+      dashboard: 'Command Center', intake: 'Project Intake Console',
+      simulations: 'Simulation Engine', twin: 'Digital Twin',
+      gaps: 'Gap Report', scorecard: 'Readiness Scorecard',
+      techfile: 'Technical File', analytics: 'Analytics'
+    };
+
+    function navigate(view) {
+      document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      const screen = document.getElementById('view-' + view);
+      if (screen) screen.classList.add('active');
+      const navItem = document.querySelector(`.nav-item[data-view="${view}"]`);
+      if (navItem) navItem.classList.add('active');
+      const title = document.getElementById('topbar-title');
+      if (title) title.textContent = TITLES[view] || view;
+      // Lazy init charts when analytics is shown
+      if (view === 'analytics') setTimeout(initCharts, 50);
+      if (view === 'scorecard') setTimeout(initCharts, 50);
+    }
+
+    document.querySelectorAll('.nav-item').forEach(btn => {
+      btn.addEventListener('click', () => navigate(btn.dataset.view));
+    });
+
+    // ── WIZARD STEPS ───────────────────────────────────────────
+    let currentStep = 0;
+    function setStep(n) {
+      const max = 4;
+      currentStep = Math.max(0, Math.min(max, n));
+      document.querySelectorAll('.wizard-step-panel').forEach(p => {
+        p.style.display = p.dataset.panel == currentStep ? 'block' : 'none';
+      });
+      document.querySelectorAll('.wstep').forEach((s, i) => {
+        s.classList.toggle('active', i === currentStep);
+        s.classList.toggle('done', i < currentStep);
+      });
+    }
+    function nextStep() { setStep(currentStep + 1); }
+    function prevStep() { setStep(currentStep - 1); }
+    document.querySelectorAll('.wstep').forEach(s => {
+      s.addEventListener('click', () => setStep(+s.dataset.step));
+    });
+
+    // ── COPILOT ─────────────────────────────────────────────────
+    function toggleCopilot() {
+      const p = document.getElementById('copilot-panel');
+      p.classList.toggle('open');
+    }
+    function sendCopilot() {
+      const input = document.getElementById('copilot-input');
+      const msgs = document.getElementById('copilot-msgs');
+      const text = input.value.trim();
+      if (!text) return;
+      msgs.innerHTML += `<div class="msg msg-user">${text}</div>`;
+      input.value = '';
+      const replies = {
+        gap: 'Use the Gap Report to sort by severity and work from Critical to Major. Each gap includes the affected component, fix recommendation, and downstream impact. After applying the design change, rerun the linked SIM engine.',
+        thermal: 'Moving the regulator 6mm from the sealed rib should recover ~5.8°C of T4 headroom. Attach the updated STEP file to SIM-02 and rerun.',
+        zone: 'The readiness scorecard combines simulation completion, gap severity, and evidence coverage. Zone 1 path shows 84% confidence with the current design.',
+        default: 'Exovanta is organised around: Project Intake → Digital Twin → Simulation Engine → Gap Report → Readiness Scorecard → Technical File. Ask about a specific feature or compliance term and I will guide you to the right workflow.'
+      };
+      const t = text.toLowerCase();
+      const reply = t.includes('gap') || t.includes('fix') ? replies.gap : t.includes('thermal') || t.includes('heat') ? replies.thermal : t.includes('zone') || t.includes('score') ? replies.zone : replies.default;
+      setTimeout(() => {
+        msgs.innerHTML += `<div class="msg msg-ai">${reply}</div>`;
+        msgs.scrollTop = msgs.scrollHeight;
+      }, 600);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    // ── ANIMATE SIM PROGRESS ────────────────────────────────────
+    function animateRunning() {
+      const running = SIMULATIONS.filter(s => s.status === 'Running');
+      setInterval(() => {
+        running.forEach(s => {
+          if (s.progress < 95) {
+            s.progress = Math.min(95, s.progress + (Math.random() * 1.5));
+            s.score = Math.min(98, s.score + (Math.random() * 0.3));
+          }
+        });
+        renderSimCards();
+        renderSimRings();
+      }, 3000);
+    }
+
+    // ── INIT ────────────────────────────────────────────────────
+    renderSimRings();
+    renderLiveFeed();
+    renderSimCards();
+    renderGaps();
+    renderDimRings();
+    renderTechSections();
+    initCharts();
+    animateRunning();
+  </script>
+</body>
+
+</html>

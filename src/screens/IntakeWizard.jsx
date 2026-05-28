@@ -2,8 +2,9 @@ import { useState } from "react";
 
 export default function IntakeWizard() {
   const [step, setStep] = useState(0);
+  const [uploadedFiles, setUploadedFiles] = useState({});
 
-  const nextStep = () => setStep(s => Math.min(s + 1, 4));
+  const nextStep = () => setStep(s => Math.min(s + 1, 3));
   const prevStep = () => setStep(s => Math.max(s - 1, 0));
 
   return (
@@ -24,7 +25,7 @@ export default function IntakeWizard() {
 
         {/* Wizard steps */}
         <div className="wizard-steps">
-          {["Upload .step", "Upload .stl", "Data packs", "Environment", "Review"].map((label, i) => (
+          {["Uploads", "Data packs", "Environment", "Review"].map((label, i) => (
             <div
               key={i}
               className={`wstep ${step === i ? "active" : ""}`}
@@ -41,131 +42,80 @@ export default function IntakeWizard() {
           <div id="wizard-content">
             {step === 0 && (
               <div className="wizard-step-panel">
-                <div className="grid cols-2" style={{ gap: "12px" }}>
-                  <div className="field">
-                    <label>Product name</label>
-                    <input defaultValue="Exovanta Sentinel" />
-                  </div>
-                  <div className="field">
-                    <label>Model / family</label>
-                    <input defaultValue="EXO-SEN-42" />
-                  </div>
-                  <div className="field">
-                    <label>Target zone</label>
-                    <select>
-                      <option>Zone 1</option>
-                      <option>Zone 0</option>
-                    </select>
-                  </div>
-                  <div className="field">
-                    <label>Gas group</label>
-                    <select>
-                      <option>IIC</option>
-                      <option>IIB</option>
-                      <option>IIA</option>
-                    </select>
-                  </div>
-                  <div className="field">
-                    <label>Temperature class</label>
-                    <select>
-                      <option>T4</option>
-                      <option>T1</option>
-                      <option>T2</option>
-                      <option>T3</option>
-                      <option>T5</option>
-                      <option>T6</option>
-                    </select>
-                  </div>
-                  <div className="field">
-                    <label>Protection concept</label>
-                    <select>
-                      <option>Ex ia</option>
-                      <option>Ex ib</option>
-                      <option>Ex d</option>
-                      <option>Ex e</option>
-                    </select>
-                  </div>
-                  <div className="field">
-                    <label>EPL target</label>
-                    <select>
-                      <option>Gb</option>
-                      <option>Ga</option>
-                    </select>
-                  </div>
-                  <div className="field">
-                    <label>Max non-IS supply Um (V)</label>
-                    <input type="number" defaultValue="24" />
-                  </div>
-                </div>
-                <div className="field">
-                  <label>Intended use description</label>
-                  <textarea style={{ height: "80px" }}>
-                    Battery powered wireless gas sensor with sealed enclosure, 24V service input,
-                    IIC gas group, and continuous refinery monitoring duty.
-                  </textarea>
-                </div>
-                <div className="annotation mt-12">
-                  <strong className="text-green">Zone 1 recommended</strong> — Low-energy
-                  architecture, intrinsic-safety intent, and sealed enclosure evidence align with a
-                  strong Zone 1 path. Confidence: 88%
+                <div className="card-eyebrow mb-8">Technical uploads</div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "14px",
+                  }}
+                >
+                  {[
+                    { name: "PDF", accept: ".pdf" },
+                    { name: "XML / JSON", accept: ".xml,.json" },
+                    { name: "XLSX", accept: ".xlsx" },
+                    { name: "STL File", accept: ".stl" },
+                    { name: "STEP File", accept: ".step,.stp" },
+                  ].map((item, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        background: "var(--bg-3)",
+                        border: "1px solid var(--border)",
+                        borderRadius: "12px",
+                        padding: "16px",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <div>
+                        <div className="fw-600">{item.name}</div>
+                        <div className="mono fs-11 text-green mt-8">
+                          {uploadedFiles[i] || "No file selected"}
+                        </div>
+                      </div>
+
+                      <>
+                        <input
+                          id={`file-${i}`}
+                          type="file"
+                          accept={item.accept}
+                          style={{ display: "none" }}
+                          onChange={(e) => {
+                            if (e.target.files.length > 0) {
+                              setUploadedFiles((prev) => ({
+                                ...prev,
+                                [i]: e.target.files[0].name,
+                              }));
+                            }
+                          }}
+                        />
+
+                        <button
+                          className="btn btn-primary"
+                          onClick={() =>
+                            document.getElementById(`file-${i}`).click()
+                          }
+                        >
+                          Upload
+                        </button>
+                      </>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
-
             {step === 1 && (
               <div className="wizard-step-panel">
-                <div
-                  style={{
-                    border: "2px dashed var(--border)",
-                    borderRadius: "12px",
-                    padding: "32px",
-                    textAlign: "center",
-                    marginBottom: "16px",
-                  }}
-                >
-                  <div style={{ fontSize: "32px", marginBottom: "8px" }}>↑</div>
-                  <div className="fw-500 mb-8">Gerber, STEP, PDF, netlist, CSV, XLSX</div>
-                  <div className="text-dim fs-12">Drag files into the Exovanta parse queue</div>
-                </div>
-                {/* Example parsed files */}
-                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                  <div className="parsed-file">
-                    <span className="mono fs-11 text-green">PCB</span>
-                    <div style={{ flex: 1 }}>
-                      <div className="fw-500 fs-12">sensor-v42.GBR</div>
-                      <div className="text-dim fs-11">6 layers, min track 0.18mm</div>
-                    </div>
-                    <span className="pill pill-good">Parsed</span>
-                  </div>
-                  <div className="parsed-file">
-                    <span className="mono fs-11 text-amber">3D</span>
-                    <div style={{ flex: 1 }}>
-                      <div className="fw-500 fs-12">enclosure.step</div>
-                      <div className="text-dim fs-11">112mm × 64mm × 28mm detected</div>
-                    </div>
-                    <span className="pill pill-watch">Parsing</span>
-                  </div>
-                  <div className="parsed-file">
-                    <span className="mono fs-11 text-blue">PDF</span>
-                    <div style={{ flex: 1 }}>
-                      <div className="fw-500 fs-12">exovanta-plan.pdf</div>
-                      <div className="text-dim fs-11">IEC 60079-0 Cl.24 section found</div>
-                    </div>
-                    <span className="pill pill-good">Parsed</span>
-                  </div>
+                <div className="annotation">
+                  Step 2: Component-level and mechanical data packs. Upload BOM, barrier
+                  datasheets, certification evidence, and supporting compliance files.
                 </div>
               </div>
             )}
             {step === 2 && (
-              <div className="wizard-step-panel">
-                <div className="annotation">
-                  Step 3: Component-level and mechanical data packs. Upload BOM, barrier datasheets,
-                  and STEP/IGES enclosure files.
-                </div>
-              </div>
-            )}
-
-            {step === 3 && (
               <div className="wizard-step-panel">
                 <div className="grid cols-2" style={{ gap: "12px" }}>
                   <div className="field"><label>Ambient min (°C)</label><input type="number" defaultValue="-20" /></div>
@@ -178,7 +128,7 @@ export default function IntakeWizard() {
               </div>
             )}
 
-            {step === 4 && (
+            {step === 3 && (
               <div className="wizard-step-panel">
                 <div className="grid cols-2" style={{ gap: "12px", marginBottom: "16px" }}>
                   <div style={{ background: "var(--bg-3)", borderRadius: "10px", padding: "14px" }}>

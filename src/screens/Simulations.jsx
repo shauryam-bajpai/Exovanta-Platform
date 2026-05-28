@@ -48,7 +48,6 @@ export default function Simulations() {
             </div>
           </div>
 
-
         ))}
       </div>
     </section>

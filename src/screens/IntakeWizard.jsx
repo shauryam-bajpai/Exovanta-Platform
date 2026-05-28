@@ -24,7 +24,7 @@ export default function IntakeWizard() {
 
         {/* Wizard steps */}
         <div className="wizard-steps">
-          {[".step or .stp file ingestion", "Upload .stl", "Data packs", "Environment", "Review"].map((label, i) => (
+          {["Upload .step", "Upload .stl", "Data packs", "Environment", "Review"].map((label, i) => (
             <div
               key={i}
               className={`wstep ${step === i ? "active" : ""}`}

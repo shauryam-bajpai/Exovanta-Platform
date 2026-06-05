@@ -45,7 +45,6 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       data = result.value;
 
     } else if (ext === "csv") {
-      // Fixed: Wrapped CSV parsing in a Promise so it awaits properly
       data = await new Promise((resolve, reject) => {
         const results = [];
         fs.createReadStream(filePath)
@@ -63,7 +62,6 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   } finally {
-    // Safely clean up the temp file
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
